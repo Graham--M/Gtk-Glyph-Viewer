@@ -1,0 +1,651 @@
+/*-------------------------------------------------------------------------*\
+  Generated file - DO NOT EDIT!
+
+    Use ../tools/generate_gtkbuilder_string.sh
+\*-------------------------------------------------------------------------*/
+
+
+const char* GLADE_STRING = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \
+<interface> \
+  <requires lib=\"gtk+\" version=\"2.24\"/> \
+  <!-- interface-naming-policy project-wide --> \
+  <object class=\"GtkAdjustment\" id=\"dialog_goto_index_spin_adj\"> \
+    <property name=\"upper\">100</property> \
+    <property name=\"step_increment\">1</property> \
+    <property name=\"page_increment\">1</property> \
+  </object> \
+  <object class=\"GtkDialog\" id=\"dlg_goto_char\"> \
+    <property name=\"can_focus\">False</property> \
+    <property name=\"border_width\">5</property> \
+    <property name=\"title\" translatable=\"yes\">Goto Unicode Char</property> \
+    <property name=\"resizable\">False</property> \
+    <property name=\"modal\">True</property> \
+    <property name=\"type_hint\">dialog</property> \
+    <child internal-child=\"vbox\"> \
+      <object class=\"GtkVBox\" id=\"dialog-vbox2\"> \
+        <property name=\"visible\">True</property> \
+        <property name=\"can_focus\">False</property> \
+        <property name=\"spacing\">2</property> \
+        <child internal-child=\"action_area\"> \
+          <object class=\"GtkHButtonBox\" id=\"dialog-action_area2\"> \
+            <property name=\"visible\">True</property> \
+            <property name=\"can_focus\">False</property> \
+            <property name=\"layout_style\">end</property> \
+            <child> \
+              <object class=\"GtkButton\" id=\"dlg_goto_char_cancel\"> \
+                <property name=\"label\">gtk-cancel</property> \
+                <property name=\"visible\">True</property> \
+                <property name=\"can_focus\">True</property> \
+                <property name=\"receives_default\">True</property> \
+                <property name=\"use_stock\">True</property> \
+              </object> \
+              <packing> \
+                <property name=\"expand\">False</property> \
+                <property name=\"fill\">False</property> \
+                <property name=\"position\">0</property> \
+              </packing> \
+            </child> \
+            <child> \
+              <object class=\"GtkButton\" id=\"dlg_goto_char_ok\"> \
+                <property name=\"label\">gtk-ok</property> \
+                <property name=\"visible\">True</property> \
+                <property name=\"can_focus\">True</property> \
+                <property name=\"can_default\">True</property> \
+                <property name=\"has_default\">True</property> \
+                <property name=\"receives_default\">True</property> \
+                <property name=\"use_stock\">True</property> \
+              </object> \
+              <packing> \
+                <property name=\"expand\">False</property> \
+                <property name=\"fill\">False</property> \
+                <property name=\"position\">1</property> \
+              </packing> \
+            </child> \
+          </object> \
+          <packing> \
+            <property name=\"expand\">True</property> \
+            <property name=\"fill\">True</property> \
+            <property name=\"position\">0</property> \
+          </packing> \
+        </child> \
+        <child> \
+          <object class=\"GtkEntry\" id=\"dlg_goto_char_entry\"> \
+            <property name=\"visible\">True</property> \
+            <property name=\"can_focus\">True</property> \
+            <property name=\"has_focus\">True</property> \
+            <property name=\"max_length\">1</property> \
+            <property name=\"invisible_char\">●</property> \
+            <property name=\"activates_default\">True</property> \
+            <property name=\"primary_icon_activatable\">False</property> \
+            <property name=\"secondary_icon_activatable\">False</property> \
+            <property name=\"primary_icon_sensitive\">True</property> \
+            <property name=\"secondary_icon_sensitive\">True</property> \
+          </object> \
+          <packing> \
+            <property name=\"expand\">True</property> \
+            <property name=\"fill\">True</property> \
+            <property name=\"position\">1</property> \
+          </packing> \
+        </child> \
+      </object> \
+    </child> \
+    <action-widgets> \
+      <action-widget response=\"-6\">dlg_goto_char_cancel</action-widget> \
+      <action-widget response=\"-5\">dlg_goto_char_ok</action-widget> \
+    </action-widgets> \
+  </object> \
+  <object class=\"GtkListStore\" id=\"dlg_select_face_ls\"> \
+    <columns> \
+      <!-- column-name name --> \
+      <column type=\"gchararray\"/> \
+    </columns> \
+  </object> \
+  <object class=\"GtkDialog\" id=\"dlg_select_face\"> \
+    <property name=\"can_focus\">False</property> \
+    <property name=\"border_width\">5</property> \
+    <property name=\"title\" translatable=\"yes\">Select a face to load</property> \
+    <property name=\"resizable\">False</property> \
+    <property name=\"modal\">True</property> \
+    <property name=\"type_hint\">dialog</property> \
+    <child internal-child=\"vbox\"> \
+      <object class=\"GtkVBox\" id=\"dialog-vbox4\"> \
+        <property name=\"visible\">True</property> \
+        <property name=\"can_focus\">False</property> \
+        <property name=\"spacing\">2</property> \
+        <child> \
+          <object class=\"GtkVBox\" id=\"vbox1\"> \
+            <property name=\"visible\">True</property> \
+            <property name=\"can_focus\">False</property> \
+            <child> \
+              <object class=\"GtkLabel\" id=\"label1\"> \
+                <property name=\"visible\">True</property> \
+                <property name=\"can_focus\">False</property> \
+                <property name=\"label\" translatable=\"yes\">This file contains multiple faces. Select a face to load.</property> \
+              </object> \
+              <packing> \
+                <property name=\"expand\">False</property> \
+                <property name=\"fill\">True</property> \
+                <property name=\"position\">0</property> \
+              </packing> \
+            </child> \
+            <child> \
+              <object class=\"GtkComboBox\" id=\"dlg_select_face_combo\"> \
+                <property name=\"visible\">True</property> \
+                <property name=\"can_focus\">False</property> \
+                <property name=\"model\">dlg_select_face_ls</property> \
+                <child> \
+                  <object class=\"GtkCellRendererText\" id=\"renderer\"/> \
+                  <attributes> \
+                    <attribute name=\"text\">0</attribute> \
+                  </attributes> \
+                </child> \
+              </object> \
+              <packing> \
+                <property name=\"expand\">False</property> \
+                <property name=\"fill\">True</property> \
+                <property name=\"padding\">10</property> \
+                <property name=\"position\">1</property> \
+              </packing> \
+            </child> \
+          </object> \
+          <packing> \
+            <property name=\"expand\">False</property> \
+            <property name=\"fill\">True</property> \
+            <property name=\"position\">0</property> \
+          </packing> \
+        </child> \
+        <child internal-child=\"action_area\"> \
+          <object class=\"GtkHButtonBox\" id=\"dialog-action_area4\"> \
+            <property name=\"visible\">True</property> \
+            <property name=\"can_focus\">False</property> \
+            <property name=\"layout_style\">end</property> \
+            <child> \
+              <object class=\"GtkButton\" id=\"dlg_select_face_cancel\"> \
+                <property name=\"label\">gtk-cancel</property> \
+                <property name=\"visible\">True</property> \
+                <property name=\"can_focus\">True</property> \
+                <property name=\"receives_default\">True</property> \
+                <property name=\"use_stock\">True</property> \
+              </object> \
+              <packing> \
+                <property name=\"expand\">False</property> \
+                <property name=\"fill\">False</property> \
+                <property name=\"position\">0</property> \
+              </packing> \
+            </child> \
+            <child> \
+              <object class=\"GtkButton\" id=\"dlg_select_face_ok\"> \
+                <property name=\"label\">gtk-ok</property> \
+                <property name=\"visible\">True</property> \
+                <property name=\"can_focus\">True</property> \
+                <property name=\"can_default\">True</property> \
+                <property name=\"has_default\">True</property> \
+                <property name=\"receives_default\">True</property> \
+                <property name=\"use_stock\">True</property> \
+              </object> \
+              <packing> \
+                <property name=\"expand\">False</property> \
+                <property name=\"fill\">False</property> \
+                <property name=\"position\">1</property> \
+              </packing> \
+            </child> \
+          </object> \
+          <packing> \
+            <property name=\"expand\">False</property> \
+            <property name=\"fill\">True</property> \
+            <property name=\"position\">1</property> \
+          </packing> \
+        </child> \
+      </object> \
+    </child> \
+    <action-widgets> \
+      <action-widget response=\"-6\">dlg_select_face_cancel</action-widget> \
+      <action-widget response=\"-5\">dlg_select_face_ok</action-widget> \
+    </action-widgets> \
+  </object> \
+  <object class=\"GtkWindow\" id=\"window\"> \
+    <property name=\"can_focus\">False</property> \
+    <property name=\"title\" translatable=\"yes\">GTK Glyph Viewer</property> \
+    <property name=\"resizable\">False</property> \
+    <child> \
+      <object class=\"GtkVBox\" id=\"vbox\"> \
+        <property name=\"visible\">True</property> \
+        <property name=\"can_focus\">False</property> \
+        <child> \
+          <object class=\"GtkMenuBar\" id=\"menu_bar\"> \
+            <property name=\"visible\">True</property> \
+            <property name=\"can_focus\">False</property> \
+            <child> \
+              <object class=\"GtkMenuItem\" id=\"font_menu_entry\"> \
+                <property name=\"visible\">True</property> \
+                <property name=\"can_focus\">False</property> \
+                <property name=\"label\" translatable=\"yes\">_Font</property> \
+                <property name=\"use_underline\">True</property> \
+                <child type=\"submenu\"> \
+                  <object class=\"GtkMenu\" id=\"font_submenu\"> \
+                    <property name=\"visible\">True</property> \
+                    <property name=\"can_focus\">False</property> \
+                    <child> \
+                      <object class=\"GtkMenuItem\" id=\"font_open_item\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Open Font File...</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkSeparatorMenuItem\" id=\"font_sep_1\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkMenuItem\" id=\"font_size_inc\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"sensitive\">False</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Increase Font Size</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkMenuItem\" id=\"font_size_dec\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"sensitive\">False</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Decrease Font Size</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkSeparatorMenuItem\" id=\"font_sep_2\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkRadioMenuItem\" id=\"font_hinting_none\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Hinting None</property> \
+                        <property name=\"use_underline\">True</property> \
+                        <property name=\"active\">True</property> \
+                        <property name=\"draw_as_radio\">True</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkRadioMenuItem\" id=\"font_hinting_light\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Hinting Light</property> \
+                        <property name=\"use_underline\">True</property> \
+                        <property name=\"draw_as_radio\">True</property> \
+                        <property name=\"group\">font_hinting_none</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkRadioMenuItem\" id=\"font_hinting_normal\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Hinting Normal</property> \
+                        <property name=\"use_underline\">True</property> \
+                        <property name=\"draw_as_radio\">True</property> \
+                        <property name=\"group\">font_hinting_none</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkSeparatorMenuItem\" id=\"font_sep_3\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkCheckMenuItem\" id=\"font_force_autohint\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Force Autohint</property> \
+                        <property name=\"use_underline\">True</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkSeparatorMenuItem\" id=\"font_sep_4\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkMenuItem\" id=\"glyph_index_inc\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"sensitive\">False</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Increase Glyph Index</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkMenuItem\" id=\"glyph_index_dec\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"sensitive\">False</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Decrease Glyph Index</property> \
+                      </object> \
+                    </child> \
+                  </object> \
+                </child> \
+              </object> \
+            </child> \
+            <child> \
+              <object class=\"GtkMenuItem\" id=\"settings_menu_entry\"> \
+                <property name=\"visible\">True</property> \
+                <property name=\"can_focus\">False</property> \
+                <property name=\"label\" translatable=\"yes\">_Settings</property> \
+                <property name=\"use_underline\">True</property> \
+                <child type=\"submenu\"> \
+                  <object class=\"GtkMenu\" id=\"settings_submenu\"> \
+                    <property name=\"visible\">True</property> \
+                    <property name=\"can_focus\">False</property> \
+                    <child> \
+                      <object class=\"GtkCheckMenuItem\" id=\"gamma_correct\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Use Gamma Correction</property> \
+                        <property name=\"use_underline\">True</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkMenuItem\" id=\"gamma_inc\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"sensitive\">False</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Increase Gamma</property> \
+                        <property name=\"use_underline\">True</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkMenuItem\" id=\"gamma_dec\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"sensitive\">False</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Decrease Gamma</property> \
+                        <property name=\"use_underline\">True</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkSeparatorMenuItem\" id=\"settings_sep_1\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkCheckMenuItem\" id=\"show_grid\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Show Pixel Grid</property> \
+                        <property name=\"active\">True</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkCheckMenuItem\" id=\"show_outline\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Show Glyph Outline</property> \
+                        <property name=\"use_underline\">True</property> \
+                        <property name=\"active\">True</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkSeparatorMenuItem\" id=\"settings_sep_2\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkMenuItem\" id=\"lcd_filter_submenu_entry\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">LCD Filter</property> \
+                        <property name=\"use_underline\">True</property> \
+                        <child type=\"submenu\"> \
+                          <object class=\"GtkMenu\" id=\"lcd_filter_submenu\"> \
+                            <property name=\"visible\">True</property> \
+                            <property name=\"can_focus\">False</property> \
+                            <child> \
+                              <object class=\"GtkRadioMenuItem\" id=\"lcd_filter_none\"> \
+                                <property name=\"visible\">True</property> \
+                                <property name=\"can_focus\">False</property> \
+                                <property name=\"label\" translatable=\"yes\">None</property> \
+                                <property name=\"use_underline\">True</property> \
+                                <property name=\"active\">True</property> \
+                                <property name=\"draw_as_radio\">True</property> \
+                              </object> \
+                            </child> \
+                            <child> \
+                              <object class=\"GtkRadioMenuItem\" id=\"lcd_filter_light\"> \
+                                <property name=\"visible\">True</property> \
+                                <property name=\"can_focus\">False</property> \
+                                <property name=\"label\" translatable=\"yes\">Light</property> \
+                                <property name=\"use_underline\">True</property> \
+                                <property name=\"draw_as_radio\">True</property> \
+                                <property name=\"group\">lcd_filter_none</property> \
+                              </object> \
+                            </child> \
+                            <child> \
+                              <object class=\"GtkRadioMenuItem\" id=\"lcd_filter_normal\"> \
+                                <property name=\"visible\">True</property> \
+                                <property name=\"can_focus\">False</property> \
+                                <property name=\"label\" translatable=\"yes\">Normal</property> \
+                                <property name=\"use_underline\">True</property> \
+                                <property name=\"draw_as_radio\">True</property> \
+                                <property name=\"group\">lcd_filter_none</property> \
+                              </object> \
+                            </child> \
+                          </object> \
+                        </child> \
+                      </object> \
+                    </child> \
+                  </object> \
+                </child> \
+              </object> \
+            </child> \
+            <child> \
+              <object class=\"GtkMenuItem\" id=\"view_menu_entry\"> \
+                <property name=\"visible\">True</property> \
+                <property name=\"can_focus\">False</property> \
+                <property name=\"label\" translatable=\"yes\">_View</property> \
+                <property name=\"use_underline\">True</property> \
+                <child type=\"submenu\"> \
+                  <object class=\"GtkMenu\" id=\"view_submenu\"> \
+                    <property name=\"visible\">True</property> \
+                    <property name=\"can_focus\">False</property> \
+                    <child> \
+                      <object class=\"GtkMenuItem\" id=\"zoom_inc\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"sensitive\">False</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Increase Zoom</property> \
+                        <property name=\"use_underline\">True</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkMenuItem\" id=\"zoom_dec\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"sensitive\">False</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Decrease Zoom</property> \
+                        <property name=\"use_underline\">True</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkSeparatorMenuItem\" id=\"view_sep_1\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkMenuItem\" id=\"view_reset\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"sensitive\">False</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Reset Zoom and Origin</property> \
+                        <property name=\"use_underline\">True</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkSeparatorMenuItem\" id=\"view_sep_2\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkCheckMenuItem\" id=\"view_subpixel\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Use Subpixel Rendering</property> \
+                        <property name=\"use_underline\">True</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkCheckMenuItem\" id=\"show_subpixel_mask\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Show Subpixel Mask</property> \
+                        <property name=\"use_underline\">True</property> \
+                      </object> \
+                    </child> \
+                  </object> \
+                </child> \
+              </object> \
+            </child> \
+            <child> \
+              <object class=\"GtkMenuItem\" id=\"tools_menu_entry\"> \
+                <property name=\"visible\">True</property> \
+                <property name=\"can_focus\">False</property> \
+                <property name=\"label\" translatable=\"yes\">_Tools</property> \
+                <property name=\"use_underline\">True</property> \
+                <child type=\"submenu\"> \
+                  <object class=\"GtkMenu\" id=\"tools_submenu\"> \
+                    <property name=\"visible\">True</property> \
+                    <property name=\"can_focus\">False</property> \
+                    <child> \
+                      <object class=\"GtkMenuItem\" id=\"goto_glyph_index\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"sensitive\">False</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Goto Glyph Index...</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkMenuItem\" id=\"goto_char\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"sensitive\">False</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Goto Unicode Char...</property> \
+                      </object> \
+                    </child> \
+                  </object> \
+                </child> \
+              </object> \
+            </child> \
+          </object> \
+          <packing> \
+            <property name=\"expand\">False</property> \
+            <property name=\"fill\">True</property> \
+            <property name=\"position\">0</property> \
+          </packing> \
+        </child> \
+        <child> \
+          <object class=\"GtkDrawingArea\" id=\"drawing_area\"> \
+            <property name=\"visible\">True</property> \
+            <property name=\"can_focus\">False</property> \
+          </object> \
+          <packing> \
+            <property name=\"expand\">True</property> \
+            <property name=\"fill\">True</property> \
+            <property name=\"position\">1</property> \
+          </packing> \
+        </child> \
+      </object> \
+    </child> \
+  </object> \
+  <object class=\"GtkDialog\" id=\"dlg_goto_index\"> \
+    <property name=\"can_focus\">False</property> \
+    <property name=\"border_width\">5</property> \
+    <property name=\"title\" translatable=\"yes\">Goto Glyph Index</property> \
+    <property name=\"resizable\">False</property> \
+    <property name=\"modal\">True</property> \
+    <property name=\"type_hint\">dialog</property> \
+    <property name=\"transient_for\">window</property> \
+    <child internal-child=\"vbox\"> \
+      <object class=\"GtkVBox\" id=\"dialog-vbox1\"> \
+        <property name=\"visible\">True</property> \
+        <property name=\"can_focus\">False</property> \
+        <property name=\"spacing\">2</property> \
+        <child internal-child=\"action_area\"> \
+          <object class=\"GtkHButtonBox\" id=\"dialog-action_area1\"> \
+            <property name=\"visible\">True</property> \
+            <property name=\"can_focus\">False</property> \
+            <property name=\"layout_style\">end</property> \
+            <child> \
+              <object class=\"GtkButton\" id=\"dlg_goto_index_cancel\"> \
+                <property name=\"label\">gtk-cancel</property> \
+                <property name=\"visible\">True</property> \
+                <property name=\"can_focus\">True</property> \
+                <property name=\"receives_default\">True</property> \
+                <property name=\"use_stock\">True</property> \
+              </object> \
+              <packing> \
+                <property name=\"expand\">False</property> \
+                <property name=\"fill\">False</property> \
+                <property name=\"position\">0</property> \
+              </packing> \
+            </child> \
+            <child> \
+              <object class=\"GtkButton\" id=\"dlg_goto_index_ok\"> \
+                <property name=\"label\">gtk-ok</property> \
+                <property name=\"visible\">True</property> \
+                <property name=\"can_focus\">True</property> \
+                <property name=\"can_default\">True</property> \
+                <property name=\"has_default\">True</property> \
+                <property name=\"receives_default\">True</property> \
+                <property name=\"use_stock\">True</property> \
+              </object> \
+              <packing> \
+                <property name=\"expand\">False</property> \
+                <property name=\"fill\">False</property> \
+                <property name=\"position\">1</property> \
+              </packing> \
+            </child> \
+          </object> \
+          <packing> \
+            <property name=\"expand\">True</property> \
+            <property name=\"fill\">True</property> \
+            <property name=\"position\">0</property> \
+          </packing> \
+        </child> \
+        <child> \
+          <object class=\"GtkSpinButton\" id=\"dlg_goto_index_index\"> \
+            <property name=\"visible\">True</property> \
+            <property name=\"can_focus\">True</property> \
+            <property name=\"invisible_char\">●</property> \
+            <property name=\"activates_default\">True</property> \
+            <property name=\"primary_icon_activatable\">False</property> \
+            <property name=\"secondary_icon_activatable\">False</property> \
+            <property name=\"primary_icon_sensitive\">True</property> \
+            <property name=\"secondary_icon_sensitive\">True</property> \
+            <property name=\"adjustment\">dialog_goto_index_spin_adj</property> \
+            <property name=\"snap_to_ticks\">True</property> \
+            <property name=\"numeric\">True</property> \
+            <property name=\"update_policy\">if-valid</property> \
+          </object> \
+          <packing> \
+            <property name=\"expand\">True</property> \
+            <property name=\"fill\">True</property> \
+            <property name=\"position\">1</property> \
+          </packing> \
+        </child> \
+      </object> \
+    </child> \
+    <action-widgets> \
+      <action-widget response=\"-6\">dlg_goto_index_cancel</action-widget> \
+      <action-widget response=\"-5\">dlg_goto_index_ok</action-widget> \
+    </action-widgets> \
+  </object> \
+</interface>";
+
+/* END */
