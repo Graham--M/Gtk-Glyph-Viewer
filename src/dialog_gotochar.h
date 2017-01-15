@@ -4,14 +4,14 @@
 #ifndef DIALOG_GOTO_CHAR_H_
 #define DIALOG_GOTO_CHAR_H_
 
-gunichar
-goto_char_dialog_get_char();
+  gunichar
+  goto_char_dialog_get_char();
 
-gint
-goto_char_dialog_run();
+  gint
+  goto_char_dialog_run();
 
-void
-goto_char_dialog_init();
+  void
+  goto_char_dialog_init();
 
 
 #endif /* DIALOG_GOTO_CHAR_H_ */

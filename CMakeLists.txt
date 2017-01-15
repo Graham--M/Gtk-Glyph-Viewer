@@ -22,6 +22,8 @@ set (VIEWER_SOURCES
   ${VIEWER_SOURCE_DIR}/dialog_gotoindex.c
   ${VIEWER_SOURCE_DIR}/dialog_gotochar.c
   ${VIEWER_SOURCE_DIR}/dialog_selectface.c
+  ${VIEWER_SOURCE_DIR}/analysis.c
+  ${VIEWER_SOURCE_DIR}/freetype_internal_impl.c
 )
 
 add_executable (gtkglyphviewer WIN32 ${VIEWER_SOURCES})

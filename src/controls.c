@@ -4,6 +4,7 @@
 #include "dialog_gotochar.h"
 #include "dialog_selectface.h"
 #include "utils.h"
+#include "analysis.h"
 
 #include <gdk/gdkkeysyms.h> /* Not included by GDK */
 #include FT_LCD_FILTER_H
@@ -39,6 +40,11 @@
 
     GtkWidget *goto_glyph_index;
     GtkWidget *goto_char;
+
+    GtkWidget *mode_normal;
+    GtkWidget *mode_edges;
+    GtkWidget *mode_uniform_scaling;
+    GtkWidget *mode_custom_hinting;
   } _menu_widgets;
 
 
@@ -84,6 +90,31 @@
       *setting &= ~0x01;
     else
       *setting |= 0x01;
+  }
+
+
+  static int
+  _get_user_flag( char setting )
+  {
+    return setting & 0x01;
+  }
+
+
+  static void
+  _force_flag( char *setting, char flag_set )
+  {
+    *setting |= 0x02;
+
+    if( flag_set )
+      *setting |= 0x04;
+    else
+      *setting &= ~0x04;
+  }
+
+  static void
+  _release_flag( char *setting )
+  {
+    *setting &= ~0x06;
   }
 
 
@@ -195,6 +226,8 @@
           _menu_goto_char_enabled( TRUE );
         }
 
+        set_status( "Loaded font" );
+
         g_free( filename );
       }
       else if( !cancelled )
@@ -246,6 +279,8 @@
     globals.text_size = (unsigned int)size;
 
     set_face_size();
+    set_status( NULL );
+    analysis_detect_face_edges();
     setup_glyph();
   }
 
@@ -270,13 +305,22 @@
     HintingMode mode;
     
     if( ((void*)menuitem) == ((void*)(mw->font_hinting_none)) )
+    {
       mode = HINTING_MODE_NONE;
+      set_status( "Hinting disabled" );
+    }
 
     else if( ((void*)menuitem) == ((void*)(mw->font_hinting_light)) )
+    {
       mode = HINTING_MODE_LIGHT;
+      set_status( "Hinting set to light" );
+    }
 
     else if( ((void*)menuitem) == ((void*)(mw->font_hinting_normal)) )
+    {
       mode = HINTING_MODE_NORMAL;
+      set_status( "Hinting set to normal" );
+    }
 
     else
       return;
@@ -291,6 +335,9 @@
   _menu_font_force_autohint( GtkMenuItem *menuitem, gpointer user_data )
   {
     globals.force_autohint = globals.force_autohint ? FALSE : TRUE;
+
+    set_status( "Autohinter [%s]", globals.force_autohint ? "on" : "off" );
+
     if( globals.face )
       setup_glyph();
   }
@@ -330,6 +377,7 @@
       return;
 
     globals.glyph_index = index;
+    analysis_detect_face_edges();
     setup_glyph();
   }
 
@@ -354,11 +402,13 @@
     {
       globals.linear_blending = FALSE;
       _menu_gamma_change_set_enabled( FALSE );
+      set_status( "Gamma correct blending disabled" );
     }
     else
     {
       globals.linear_blending = TRUE;
       _menu_gamma_change_set_enabled( TRUE );
+      set_status( "Gamma correct blending enabled" );
     }
 
     if( globals.face )
@@ -381,6 +431,8 @@
 
     globals.gamma = gamma;
     calculate_gamma_tables();
+
+    set_status( "Gamma set to %.1f", globals.gamma );
 
     if( globals.face )
       setup_glyph();
@@ -405,6 +457,9 @@
   {
     _toggle_user_flag( &globals.draw_grid );
 
+    set_status( "Draw grid [%s]",
+                _get_user_flag( globals.draw_grid ) ? "on" : "off" );
+
     if( globals.face )
       invalidate_drawing_area();
   }
@@ -420,6 +475,9 @@
   _menu_toggle_outline( GtkMenuItem *menuitem, gpointer user_data )
   {
     _toggle_user_flag( &globals.draw_outline );
+
+    set_status( "Draw outline [%s]",
+                _get_user_flag( globals.draw_outline ) ? "on" : "off" );
 
     if( globals.face )
       invalidate_drawing_area();
@@ -445,11 +503,20 @@
     struct MenuWidgets *mw = &_menu_widgets;
 
     if( ((void*)menuitem) == ((void*)(mw->lcd_filter_none)) )
+    {
       filter = FT_LCD_FILTER_NONE;
+      set_status( "LCD filter disabled" );
+    }
     else if( ((void*)menuitem) == ((void*)(mw->lcd_filter_light)) )
+    {
       filter = FT_LCD_FILTER_LIGHT;
+      set_status( "LCD filter set to light" );
+    }
     else if( ((void*)menuitem) == ((void*)(mw->lcd_filter_normal)) )
+    {
       filter = FT_LCD_FILTER_DEFAULT;
+      set_status( "LCD filter set to Default" );
+    }
     else
       return;
 
@@ -576,6 +643,7 @@
       return;
 
     globals.glyph_index = index;
+    analysis_detect_face_edges();
     setup_glyph();
   }
 
@@ -598,6 +666,7 @@
       return;
 
     globals.glyph_index = FT_Get_Char_Index( globals.face, (FT_ULong)unichar );
+    analysis_detect_face_edges();
     setup_glyph();
   }
 
@@ -605,6 +674,53 @@
   _menu_goto_char_enabled( gboolean enabled )
   {
     gtk_widget_set_sensitive( _menu_widgets.goto_char, enabled );
+  }
+
+
+  /*************************************************************************/
+
+  /*
+   * Misc tool menu handlers
+   */
+
+  static void
+  _menu_mode_change( GtkMenuItem *menuitem, gpointer user_data )
+  {
+    struct MenuWidgets *mw = &_menu_widgets;
+
+    if( ((void*)menuitem) == ((void*)(mw->mode_normal)) )
+    {
+      _menu_toggle_outline_enabled( TRUE );
+      _menu_font_hinting_set_enabled( TRUE );
+      _release_flag( &globals.draw_outline );
+      globals.viewer_mode = VIEWER_MODE_NORMAL;
+    }
+    else if( ((void*)menuitem) == ((void*)(mw->mode_edges)) )
+    {
+      _menu_toggle_outline_enabled( FALSE );
+      _menu_font_hinting_set_enabled( FALSE );
+      _force_flag( &globals.draw_outline, 1 );
+      globals.viewer_mode = VIEWER_MODE_EDGES;
+    }
+    else if( ((void*)menuitem) == ((void*)(mw->mode_uniform_scaling)) )
+    {
+      _menu_toggle_outline_enabled( TRUE );
+      _menu_font_hinting_set_enabled( FALSE );
+      _release_flag( &globals.draw_outline );
+      globals.viewer_mode = VIEWER_MODE_UNIFORM_SCALING;
+    }
+    else if( ((void*)menuitem) == ((void*)(mw->mode_custom_hinting)) )
+    {
+      _menu_toggle_outline_enabled( TRUE );
+      _menu_font_hinting_set_enabled( FALSE );
+      _release_flag( &globals.draw_outline );
+      globals.viewer_mode = VIEWER_MODE_CUSTOM_HINTING;
+    }
+    else
+      return;
+
+    if( globals.face )
+      setup_glyph();
   }
 
 
@@ -905,6 +1021,27 @@
     /* Goto Char */
     mw->goto_char = get_builder_widget( "goto_char" );
     _activate_handler( mw->goto_char, _menu_goto_char );
+
+
+    /* --------- */
+    /* Mode Menu */
+    /* --------- */
+
+    /* Mode Normal */
+    mw->mode_normal = get_builder_widget( "mode_normal" );
+    _activate_handler( mw->mode_normal, _menu_mode_change );
+
+    /* Mode Edge Detect */
+    mw->mode_edges = get_builder_widget( "mode_edges" );
+    _activate_handler( mw->mode_edges, _menu_mode_change );
+
+    /* Mode Uniform Scaling */
+    mw->mode_uniform_scaling = get_builder_widget( "mode_uniform_scaling" );
+    _activate_handler( mw->mode_uniform_scaling, _menu_mode_change );
+
+    /* Mode Custom Hinting */
+    mw->mode_custom_hinting = get_builder_widget( "mode_custom_hinting" );
+    _activate_handler( mw->mode_custom_hinting, _menu_mode_change );
   }
 
 

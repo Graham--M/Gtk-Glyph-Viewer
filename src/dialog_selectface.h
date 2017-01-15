@@ -6,14 +6,14 @@
 #ifndef DIALOG_SELECT_FACE_H_
 #define DIALOG_SELECT_FACE_H_
 
-gint
-select_face_dialog_get_index();
+  gint
+  select_face_dialog_get_index();
 
-gint
-select_face_dialog_run( GArray *faces );
+  gint
+  select_face_dialog_run( GArray *faces );
 
-void
-select_face_dialog_init();
+  void
+  select_face_dialog_init();
 
 
 #endif /* DIALOG_GOSELECT_FACE_ */

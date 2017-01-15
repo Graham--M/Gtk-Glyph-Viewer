@@ -5,6 +5,9 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+#include <stdarg.h>
+
+
 #ifndef GLYPH_VIEWER_GLOBALS_H_
 #define GLYPH_VIEWER_GLOBALS_H_
 
@@ -23,6 +26,19 @@
     HINTING_MODE_LIGHT,
     HINTING_MODE_NORMAL
   } HintingMode;
+
+
+  typedef enum
+  {
+    /* Regular mode; draw outline, bitmap, points ect */
+    VIEWER_MODE_NORMAL,
+    /* In addition, draw detected edges */
+    VIEWER_MODE_EDGES,
+    /* Scale glyph ourselves with no pixel rounding for subglyph positions */
+    VIEWER_MODE_UNIFORM_SCALING,
+    /* Use custom Hinting instead of the built-in modes */
+    VIEWER_MODE_CUSTOM_HINTING
+  } ViewerMode;
 
 
   typedef struct GlyphViewerGlobalsRec_
@@ -56,6 +72,9 @@
 
     /* The index of the glyph in the font file to draw */
     FT_UInt            glyph_index;
+
+    /* What to draw */
+    ViewerMode         viewer_mode;
 
     /* The type of hinting to apply to the glyph */
     HintingMode        hinting_mode;
@@ -103,6 +122,8 @@
     /* Should outline and points be drawn - same flags as above */
     char               draw_outline;
 
+    GString           *status_text;
+
     /* These are intended to be user adjustable */
     /* But there's no ui for that yet           */
     ViewerColor        text_color;
@@ -136,6 +157,9 @@
 
   GtkWidget *
   get_builder_widget( const gchar *name );
+
+  void
+  set_status( char *format, ... );
 
 
 #endif /* GLYPH_VIEWER_GLOBALS_H_ */

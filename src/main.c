@@ -3,12 +3,59 @@
 #include "outlineprocessing.h"
 #include "controls.h"
 #include "interface.glade.h"
+#include "analysis.h"
 
 #include <math.h> /* for M_PI */
 
 
   static void
   _calculate_initial_scale();
+
+
+  void
+  set_status( char *format, ... )
+  {
+    va_list args;
+
+    GString *s = globals.status_text;
+
+    if( globals.face )
+    {
+      va_start( args, format );
+
+      FT_Face face = globals.face;
+
+      g_string_printf( s, "%s %s (%d", face->family_name,
+                                       face->style_name,
+                                       globals.text_size / 2 );
+
+      g_string_append_printf( s, ( globals.text_size % 2 ) ? ".5 pt)"
+                                                           : " pt)" );
+
+      if( format != NULL )
+      {
+        g_string_append_printf( s, ": " );
+        g_string_append_vprintf( s, format, args );
+      }
+
+      va_end( args );
+    }
+    else if( format != NULL )
+    {
+      va_start( args, format );
+
+      /* printf calls truncate on string */
+      g_string_printf( s, "No font loaded: " );
+      g_string_append_vprintf( s, format, args );
+
+      va_end( args );
+    }
+
+    else
+      return;
+
+    invalidate_drawing_area();
+  }
 
 
   void
@@ -24,6 +71,7 @@
     globals.glyph_index = 0;
 
     set_face_size();
+    analysis_detect_face_edges();
     setup_glyph();
   }
 
@@ -324,6 +372,28 @@
   }
 
 
+  static void
+  _draw_edges( cairo_t *cr )
+  {
+    cairo_set_line_width( cr, 3 );
+
+    cairo_translate( cr, globals.x_origin, globals.y_origin );
+    cairo_scale( cr, globals.scale / 64.0, -globals.scale / 64.0 );
+
+    analysis_draw_face_edges( cr );
+  }
+
+
+  static void
+  _draw_status_text( cairo_t *cr )
+  {
+    cairo_set_source_rgb( cr, 0, 0, 0 );
+    cairo_set_font_size( cr, 12 );
+    cairo_move_to( cr, 10, 15 );
+    cairo_show_text( cr, globals.status_text->str );
+  }
+
+
   static gboolean
   _test_setting_flags( char *setting )
   {
@@ -360,7 +430,12 @@
         RESTORE_AFTER( cr, _draw_outline( cr ) );
         RESTORE_AFTER( cr, _draw_points( cr ) );
       }
+
+      if( globals.viewer_mode == VIEWER_MODE_EDGES )
+        RESTORE_AFTER( cr, _draw_edges( cr ) );
     }
+
+    RESTORE_AFTER( cr, _draw_status_text( cr ) );
 
     cairo_destroy( cr );
 
@@ -415,29 +490,55 @@
       globals.glyph_surface = 0;
     }
 
+    if( globals.viewer_mode != VIEWER_MODE_CUSTOM_HINTING )
+    {
+      FT_Int32 load_flags = FT_LOAD_DEFAULT | FT_LOAD_NO_BITMAP;
 
-    FT_Int32 load_flags = FT_LOAD_DEFAULT | FT_LOAD_NO_BITMAP;
+      if( globals.hinting_mode == HINTING_MODE_NONE ||
+          globals.viewer_mode == VIEWER_MODE_EDGES  ||
+          globals.viewer_mode == VIEWER_MODE_UNIFORM_SCALING )
+        load_flags |= FT_LOAD_NO_HINTING;
 
-    if( globals.hinting_mode == HINTING_MODE_NONE )
-      load_flags |= FT_LOAD_NO_HINTING;
+      else if( globals.hinting_mode == HINTING_MODE_LIGHT )
+        load_flags |= FT_LOAD_TARGET_LIGHT;
 
-    else if( globals.hinting_mode == HINTING_MODE_LIGHT )
-      load_flags |= FT_LOAD_TARGET_LIGHT;
+      else if( globals.hinting_mode == HINTING_MODE_NORMAL )
+        load_flags |= globals.lcd_rendering ? FT_LOAD_TARGET_LCD 
+                                            : FT_LOAD_TARGET_NORMAL;
 
-    else if( globals.hinting_mode == HINTING_MODE_NORMAL )
-      load_flags |= globals.lcd_rendering ? FT_LOAD_TARGET_LCD 
-                                          : FT_LOAD_TARGET_NORMAL;
+      if( globals.hinting_mode != HINTING_MODE_NONE && globals.force_autohint )
+        load_flags |= FT_LOAD_FORCE_AUTOHINT;
 
-    if( globals.hinting_mode != HINTING_MODE_NONE && globals.force_autohint )
-      load_flags |= FT_LOAD_FORCE_AUTOHINT;
+      if( globals.viewer_mode == VIEWER_MODE_UNIFORM_SCALING )
+        load_flags |= FT_LOAD_NO_SCALE;
 
 
-    if( FT_Load_Glyph( globals.face, globals.glyph_index, load_flags ) )
-      panic( "Couldn't load glyph index: %d", globals.glyph_index );
+      if( FT_Load_Glyph( globals.face, globals.glyph_index, load_flags ) )
+        panic( "Couldn't load glyph index: %d", globals.glyph_index );
 
-    if (globals.face->glyph->format != FT_GLYPH_FORMAT_OUTLINE)
-      panic( "Glyph format isn't an outline, format %d",
-             globals.face->glyph->format );
+      if (globals.face->glyph->format != FT_GLYPH_FORMAT_OUTLINE)
+        panic( "Glyph format isn't an outline, format %d",
+               globals.face->glyph->format );
+
+
+      if( globals.viewer_mode == VIEWER_MODE_UNIFORM_SCALING )
+      {
+        FT_Outline*  outline  = &globals.face->glyph->outline;
+        FT_Fixed     x_scale  =  globals.face->size->metrics.x_scale;
+        FT_Fixed     y_scale  =  globals.face->size->metrics.y_scale;
+
+        FT_Vector* point       = outline->points;
+        FT_Vector* point_limit = point + outline->n_points;
+
+        for( ; point < point_limit; point++ )
+        {
+          point->x = FT_MulFix( point->x, x_scale );
+          point->y = FT_MulFix( point->y, y_scale );
+        }
+      }
+    }
+    else
+      analysis_load_hinted();
 
 
     FT_Render_Mode render_mode = globals.lcd_rendering ? FT_RENDER_MODE_LCD
@@ -502,12 +603,14 @@
       globals.outline_color      = (ViewerColor){1, 0, 0};
       globals.on_point_color     = globals.outline_color;
       globals.ctrl_point_color   = (ViewerColor){0, 0.7, 0};
+      globals.status_text        = g_string_new( "No font loaded" );
 
       calculate_gamma_tables();
     }
 
     _setup_window();
     init_controls();
+    analysis_init();
     gtk_widget_show_all( globals.window );
 
     gtk_main();

@@ -542,6 +542,58 @@ const char* GLADE_STRING = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \
                 </child> \
               </object> \
             </child> \
+            <child> \
+              <object class=\"GtkMenuItem\" id=\"mode_menu_entry\"> \
+                <property name=\"visible\">True</property> \
+                <property name=\"can_focus\">False</property> \
+                <property name=\"label\" translatable=\"yes\">_Mode</property> \
+                <property name=\"use_underline\">True</property> \
+                <child type=\"submenu\"> \
+                  <object class=\"GtkMenu\" id=\"mode_submenu\"> \
+                    <property name=\"visible\">True</property> \
+                    <property name=\"can_focus\">False</property> \
+                    <child> \
+                      <object class=\"GtkRadioMenuItem\" id=\"mode_normal\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Normal</property> \
+                        <property name=\"active\">True</property> \
+                        <property name=\"draw_as_radio\">True</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkRadioMenuItem\" id=\"mode_edges\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Edge Detection</property> \
+                        <property name=\"draw_as_radio\">True</property> \
+                        <property name=\"group\">mode_normal</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkRadioMenuItem\" id=\"mode_uniform_scaling\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Scale glyphs uniformly</property> \
+                        <property name=\"use_underline\">True</property> \
+                        <property name=\"draw_as_radio\">True</property> \
+                        <property name=\"group\">mode_normal</property> \
+                      </object> \
+                    </child> \
+                    <child> \
+                      <object class=\"GtkRadioMenuItem\" id=\"mode_custom_hinting\"> \
+                        <property name=\"visible\">True</property> \
+                        <property name=\"can_focus\">False</property> \
+                        <property name=\"label\" translatable=\"yes\">Custom Hinting</property> \
+                        <property name=\"use_underline\">True</property> \
+                        <property name=\"draw_as_radio\">True</property> \
+                        <property name=\"group\">mode_normal</property> \
+                      </object> \
+                    </child> \
+                  </object> \
+                </child> \
+              </object> \
+            </child> \
           </object> \
           <packing> \
             <property name=\"expand\">False</property> \
