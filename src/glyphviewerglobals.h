@@ -17,6 +17,7 @@
     double red;
     double green;
     double blue;
+    double alpha;
   } ViewerColor;
 
 
@@ -124,19 +125,26 @@
 
     GString           *status_text;
 
-    /* These are intended to be user adjustable */
-    /* But there's no ui for that yet           */
+    /* Glyph bitmap color (alpha ignored) */
     ViewerColor        text_color;
-
+    /* Window background color (alpha ignored) */
     ViewerColor        bg_color;
-
+    /* Standard Grid Line Color */
     ViewerColor        grid_color;
-
+    /* Axis Line Color */
+    ViewerColor        grid_origin_color;
+    /* Glyph outline color */
     ViewerColor        outline_color;
-
+    /* Regular outline point color */
     ViewerColor        on_point_color;
-
+    /* Outline bezier control point color */
     ViewerColor        ctrl_point_color;
+    /* Outline single edge color */
+    ViewerColor        edge_unlinked_color;
+    /* Outline linked edge pair color */
+    ViewerColor        edge_linked_color;
+    /* Outline additional (serif) linked edge color */
+    ViewerColor        edge_serif_color;
   } GlyphViewerGlobals;
 
 

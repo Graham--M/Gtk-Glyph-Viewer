@@ -42,7 +42,6 @@
 #define EDGE_ROUND    ( 1U << 0 )
 #define EDGE_SERIF    ( 1U << 1 )
 #define EDGE_DONE     ( 1U << 2 )
-#define EDGE_NEUTRAL  ( 1U << 3 ) /* edge aligns to a neutral blue zone */
 
 
   typedef struct PointRec_*     Point;
@@ -60,6 +59,14 @@
     FT_Pos     ox, oy;   /* original, scaled position                   */
     FT_Short   fx, fy;   /* original, unscaled position (in font units) */
     FT_Pos     x, y;     /* current position                            */
+
+    /*
+     * The U,V fields are a holdover from the Freetype autohinter code
+     * which has been adapted to work on the Y axis only. They are also
+     * used to hold offsets to the prev/next non near points in that code
+     * and this ought to be factored out into a seperate field so they can
+     * be completely removed.
+     */
     FT_Pos     u, v;     /* current (x,y) or (y,x) depending on context */
 
     Point      next;     /* next point in contour     */
@@ -102,9 +109,6 @@
     FT_Char     dir;        /* edge direction                               */
     FT_Fixed    scale;      /* used to speed up interpolation between edges */
 
-    #if 0
-    AF_Width    blue_edge;  /* non-NULL if this is a blue edge */
-    #endif
     Edge        link;       /* link edge                       */
     Edge        serif;      /* primary edge for serifs         */
     FT_Int      score;      /* used during stem matching       */
@@ -147,6 +151,11 @@
 
     /* Arrays to avoid allocation penalty.                */
     /* The `embedded' structure must be the last element! */
+
+    /* The `hints` structure this was derived from in the */
+    /* freetype autohinter was destroyed at the end of    */
+    /* the glyph hinting so this avoided a call to        */
+    /* malloc on each glyph load. */
     struct
     {
       Point          contours[CONTOURS_EMBEDDED];
@@ -1805,125 +1814,11 @@
 
 
   static void
-  _analysis_position_edges( Analysis analysis,
-                            FT_Pos height_org,
-                            FT_Pos height_fit )
-  {
-    FT_Pos height_delta = height_fit - height_org;
-
-    Edge edge_limit = analysis->edges + analysis->num_edges;
-
-    /* Position stems (linked edges) first */
-    for( Edge edge = analysis->edges; edge < edge_limit; edge++ )
-    {
-      if( !edge->link || edge->link > edge )
-        continue;
-
-      FT_Bool above_origin, under_height;
-
-      above_origin = edge->link->opos > 0 ? TRUE : FALSE;
-      under_height = edge->opos < height_org ? TRUE : FALSE;
-
-      if( !above_origin && !under_height )
-      {
-        /* Stem spans the whole alignment area. Don't preserve width */
-        edge->pos += height_delta;
-      }
-
-      else if( above_origin && !under_height )
-      {
-        /* The alignment height is inside the stem, just offset */
-        edge->pos += height_delta;
-        edge->link->pos += height_delta;
-      }
-
-      else if( above_origin && under_height )
-      {
-        FT_Pos stem_pos_org, stem_pos_fit, delta;
-
-        stem_pos_org = ( edge->opos + edge->link->opos ) / 2;
-        stem_pos_fit = FT_MulDiv( stem_pos_org, height_fit, height_org );
-        delta = stem_pos_fit - stem_pos_org;
-
-        edge->pos += delta;
-        edge->link->pos += delta;
-      }
-
-      /* else if( !above_origin && under_height ) {} */
-      /*   Origin is inside the stem. Don't move.    */
-
-      edge->flags       |= EDGE_DONE;
-      edge->link->flags |= EDGE_DONE;
-    }
-
-    /* Now do the rest of the edges */
-    for( Edge edge = analysis->edges; edge < edge_limit; edge++ )
-    {
-      if( edge->flags & EDGE_DONE )
-        continue;
-
-      /* Serif edges just get their corresponding opposite edge's offset */
-      if( edge->serif )
-        edge->pos += edge->serif->pos - edge->serif->opos;
-
-      /* Above the alignment height so it get's the full offset */
-      else if( edge->opos >= height_org )
-        edge->pos += height_delta;
-
-      /* Inside alignment zone. Align in proportion to other finished edges */
-      else if( edge->opos > 0 )
-      {
-        Edge prev_done = NULL;
-        Edge next_done = NULL;
-
-        for( Edge e = edge - 1; e >= analysis->edges && !prev_done; e-- )
-          if( e->flags & EDGE_DONE )
-            prev_done = e;
-
-        for( Edge e = edge + 1; e < edge_limit && !next_done; e++ )
-          if( e->flags & EDGE_DONE )
-            next_done = e;
-
-        FT_Pos prev_org, next_org, prev_fit, next_fit;
-
-        if( prev_done )
-        {
-          prev_org = prev_done->opos;
-          prev_fit = prev_done->pos;
-        }
-        else
-          prev_org = prev_fit = 0;
-
-        if( next_done )
-        {
-          next_org = next_done->opos;
-          next_fit = next_done->pos;
-        }
-        else
-        {
-          next_org = height_org;
-          next_fit = height_fit;
-        }
-
-        edge->pos = FT_MulDiv( edge->opos - prev_org,
-                               next_fit - prev_fit,
-                               next_org - prev_org ) + prev_fit;
-      }
-
-      /* else                                                         */
-      /*   the edge is at or below the origin and no change is needed */
-
-      edge->flags |= EDGE_DONE;
-    }
-  }
-
-
-  static void
-  _analysis_position_edges_v2( Analysis  analysis,
-                               FT_Pos    cap_height_org,
-                               FT_Pos    cap_height_fit,
-                               FT_Pos    x_height_org,
-                               FT_Pos    x_height_fit )
+  _analysis_position_edges( Analysis  analysis,
+                            FT_Pos    cap_height_org,
+                            FT_Pos    cap_height_fit,
+                            FT_Pos    x_height_org,
+                            FT_Pos    x_height_fit )
   {
     FT_Pos  cap_height_delta = cap_height_fit - cap_height_org;
     FT_Pos  x_height_delta   = x_height_fit - x_height_org;
@@ -2426,17 +2321,15 @@
     y_scale = globals.face->size->metrics.y_scale;
 
     cap_height = _calculate_alignment_height( globals.face, "OTHEZD" );
-    x_height = _calculate_alignment_height( globals.face, /*"vwxyz"*/ "aeocsz" );
+    x_height = _calculate_alignment_height( globals.face, "aeocsz" );
     limit = _calculate_stem_linking_limit( _analysis, globals.face );
 
+    /* Round up to next px if in top 2/3 otherwise round down. */
     cap_height_scaled = FT_MulFix( cap_height, y_scale );
-    /*cap_height_fitted = ( cap_height_scaled + 63 ) & ~63; // Round up to next pixel*/
-    cap_height_fitted = ( cap_height_scaled + 32 ) & ~63; // Round to nearest px
+    cap_height_fitted = ( cap_height_scaled + 43 ) & ~63;
 
     x_height_scaled = FT_MulFix( x_height, y_scale );
-    /*x_height_fitted = cap_height_fitted - cap_height_scaled + x_height_scaled;*/
-    /*x_height_fitted = ( x_height_scaled + 63 ) & ~63; // Round up to next pixel*/
-    x_height_fitted = ( x_height_scaled + 32 ) & ~63;
+    x_height_fitted = ( x_height_scaled + 43 ) & ~63;
 
     if( FT_Load_Glyph( globals.face, globals.glyph_index, FT_LOAD_NO_SCALE ) )
       panic( "analysis_detect_face_edges: Couldn't load glyph index: %d",
@@ -2446,9 +2339,8 @@
     _analysis_compute_segments( _analysis );
     _analysis_link_segments( _analysis, limit );
     _analysis_compute_edges( _analysis );
-    /*_analysis_position_edges( _analysis, x_height_scaled, x_height_fitted );*/
-    _analysis_position_edges_v2( _analysis, cap_height_scaled, cap_height_fitted,
-                                 x_height_scaled, x_height_fitted );
+    _analysis_position_edges( _analysis, cap_height_scaled, cap_height_fitted,
+                              x_height_scaled, x_height_fitted );
     _analysis_adjust_edge_points( _analysis );
     _analysis_adjust_strong_points( _analysis, cap_height_scaled, cap_height_fitted );
     _analysis_adjust_weak_points( _analysis );
@@ -2476,6 +2368,10 @@
   analysis_draw_face_edges( cairo_t *cr )
   {
     cairo_matrix_t coord_matrix;
+
+    ViewerColor cu = globals.edge_unlinked_color;
+    ViewerColor cl = globals.edge_linked_color;
+    ViewerColor cs = globals.edge_serif_color;
 
     /* Store the set transformation for later */
     cairo_get_matrix( cr, &coord_matrix );
@@ -2507,11 +2403,11 @@
         double max_x = FT_MulFix( max_coord, _analysis->x_scale );
 
         if( edge->link )
-          cairo_set_source_rgba( cr, 1, 0, 1, 0.8 );
+          cairo_set_source_rgba( cr, cl.red, cl.green, cl.blue, cl.alpha );
         else if( edge->serif )
-          cairo_set_source_rgba( cr, 0, 1, 0.4, 0.8 );
+          cairo_set_source_rgba( cr, cs.red, cs.green, cs.blue, cs.alpha );
         else
-          cairo_set_source_rgba( cr, 0, 0.4, 1, 0.8 );
+          cairo_set_source_rgba( cr, cu.red, cu.green, cu.blue, cu.alpha );
 
         cairo_move_to( cr, min_x, edge->opos );
         cairo_line_to( cr, max_x, edge->opos );

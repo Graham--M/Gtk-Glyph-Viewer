@@ -3,6 +3,7 @@
 #include "dialog_gotoindex.h"
 #include "dialog_gotochar.h"
 #include "dialog_selectface.h"
+#include "dialog_changecolors.h"
 #include "utils.h"
 #include "analysis.h"
 
@@ -31,6 +32,7 @@
     GtkWidget *lcd_filter_none;
     GtkWidget *lcd_filter_light;
     GtkWidget *lcd_filter_normal;
+    GtkWidget *change_colors;
 
     GtkWidget *zoom_inc;
     GtkWidget *zoom_dec;
@@ -493,7 +495,7 @@
   /*************************************************************************/
 
   /*
-   * Display Option handlers
+   * LCD Filter handlers
    */
 
   static void
@@ -534,6 +536,23 @@
     gtk_widget_set_sensitive( mw->lcd_filter_none, enabled );
     gtk_widget_set_sensitive( mw->lcd_filter_light, enabled );
     gtk_widget_set_sensitive( mw->lcd_filter_normal, enabled );
+  }
+
+
+  /*************************************************************************/
+
+  /*
+   * Change Color handler
+   */
+
+  static void
+  _menu_change_colors( GtkMenuItem *menuitem, gpointer user_data )
+  {
+    if( change_colors_dialog_run() == GTK_RESPONSE_OK )
+      if( globals.face )
+        setup_glyph();
+      else
+        invalidate_drawing_area();
   }
 
 
@@ -615,6 +634,8 @@
 
     if( globals.face )
       setup_glyph();
+    else
+      invalidate_drawing_area(); /* The background gets changed. */
   }
 
   static void
@@ -963,6 +984,10 @@
     mw->lcd_filter_normal = get_builder_widget( "lcd_filter_normal" );
     _activate_handler( mw->lcd_filter_normal, _menu_lcd_filter );
 
+    /* Change Colors */
+    mw->change_colors = get_builder_widget( "change_colors" );
+    _activate_handler( mw->change_colors, _menu_change_colors );
+
 
     /* --------- */
     /* View Menu */
@@ -1079,6 +1104,7 @@
     goto_index_dialog_init();
     goto_char_dialog_init();
     select_face_dialog_init();
+    change_colors_dialog_init();
   }
 
 

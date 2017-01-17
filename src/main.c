@@ -165,7 +165,7 @@
   static void
   _clear_background( cairo_t *cr )
   {
-    ViewerColor bg = (ViewerColor){1, 1, 1};
+    ViewerColor bg = (ViewerColor){1, 1, 1, 1};
     if( !globals.show_subpixel_mask )
       bg = globals.bg_color;
 
@@ -286,7 +286,7 @@
     /* Get the size of the area to draw into */
     gtk_widget_get_allocation( globals.drawing_area, &alloc );
 
-    cairo_set_source_rgba( cr, c.red, c.green, c.blue, 0.3 );
+    cairo_set_source_rgba( cr, c.red, c.green, c.blue, c.alpha );
     cairo_set_line_width( cr, 1 );
 
     for( double x = x_origin - scale; x > 0; x -= scale )
@@ -316,7 +316,8 @@
     cairo_stroke( cr );
 
     /* Origin lines are a seperate color. */
-    cairo_set_source_rgba( cr, c.red, c.green, c.blue, 0.8 );
+    c = globals.grid_origin_color;
+    cairo_set_source_rgba( cr, c.red, c.green, c.blue, c.alpha );
     cairo_move_to( cr, x_origin, 0 );
     cairo_line_to( cr, x_origin, alloc.height );
     cairo_move_to( cr, 0, y_origin );
@@ -330,7 +331,7 @@
   _draw_outline( cairo_t *cr )
   {
     ViewerColor c = globals.outline_color;
-    cairo_set_source_rgb( cr, c.red, c.green, c.blue );
+    cairo_set_source_rgba( cr, c.red, c.green, c.blue, c.alpha );
     cairo_set_line_width( cr, 1 );
 
     cairo_translate( cr, globals.x_origin, globals.y_origin );
@@ -358,10 +359,12 @@
     for( int i = 0; i < outline->n_points; i++ )
     {
       if( outline->tags[i] & 1 ) /* Point on curve */
-        cairo_set_source_rgb( cr, c_on.red, c_on.green, c_on.blue );
+        cairo_set_source_rgba( cr, c_on.red, c_on.green, c_on.blue,
+                                                         c_on.alpha );
 
       else /* Control point */
-        cairo_set_source_rgb( cr, c_ctl.red, c_ctl.green, c_ctl.blue );
+        cairo_set_source_rgba( cr, c_ctl.red, c_ctl.green, c_ctl.blue,
+                                                           c_ctl.alpha );
 
       FT_Vector *p = outline->points + i;
       cairo_arc( cr, globals.x_origin + p->x * globals.scale / 64.0,
@@ -387,7 +390,18 @@
   static void
   _draw_status_text( cairo_t *cr )
   {
-    cairo_set_source_rgb( cr, 0, 0, 0 );
+    /* Make sure status text is readable against background color. */
+    /* http://stackoverflow.com/a/596241 */
+    /* https://www.w3.org/TR/AERT#color-contrast */
+    double luminance = 0.299 * globals.bg_color.red +
+                       0.587 * globals.bg_color.green +
+                       0.114 * globals.bg_color.blue;
+
+    if( !globals.show_subpixel_mask && luminance < 0.5 )
+      cairo_set_source_rgb( cr, 1, 1, 1 );
+    else
+      cairo_set_source_rgb( cr, 0, 0, 0 );
+
     cairo_set_font_size( cr, 12 );
     cairo_move_to( cr, 10, 15 );
     cairo_show_text( cr, globals.status_text->str );
@@ -453,7 +467,7 @@
   GtkWidget *
   get_builder_widget( const gchar *name )
   {
-    return (GtkWidget*) gtk_builder_get_object( globals.builder, name);
+    return (GtkWidget*) gtk_builder_get_object( globals.builder, name );
   }
 
 
@@ -553,7 +567,7 @@
 
     cairo_t *cr = cairo_create( globals.glyph_surface );
 
-    ViewerColor bg = (ViewerColor){1, 1, 1};
+    ViewerColor bg = (ViewerColor){1, 1, 1, 1};
     if( !globals.show_subpixel_mask )
       bg = globals.bg_color;
 
@@ -561,7 +575,7 @@
     cairo_paint( cr );
     cairo_destroy( cr );
 
-    ViewerColor fg = (ViewerColor){0, 0, 0};
+    ViewerColor fg = (ViewerColor){0, 0, 0, 1};
     if( !globals.show_subpixel_mask )
       fg = globals.text_color;
 
@@ -584,26 +598,30 @@
 
     /* Initialise defaults */
     {
-      globals.face               = 0;
-      globals.text_size          = 18;
-      globals.resolution         = 96;
-      globals.hinting_mode       = 0;
-      globals.force_autohint     = FALSE;
-      globals.lcd_rendering      = FALSE;
-      globals.linear_blending    = FALSE;
-      globals.show_subpixel_mask = FALSE;
-      globals.gamma              = 1.8;
-      globals.glyph_surface      = 0;
-      globals.scale              = 0;
-      globals.draw_grid          = 1;
-      globals.draw_outline       = 1;
-      globals.text_color         = (ViewerColor){0, 0, 0};
-      globals.bg_color           = (ViewerColor){1, 1, 1};
-      globals.grid_color         = (ViewerColor){0, 0, 0};
-      globals.outline_color      = (ViewerColor){1, 0, 0};
-      globals.on_point_color     = globals.outline_color;
-      globals.ctrl_point_color   = (ViewerColor){0, 0.7, 0};
-      globals.status_text        = g_string_new( "No font loaded" );
+      globals.face                = 0;
+      globals.text_size           = 18;
+      globals.resolution          = 96;
+      globals.hinting_mode        = 0;
+      globals.force_autohint      = FALSE;
+      globals.lcd_rendering       = FALSE;
+      globals.linear_blending     = FALSE;
+      globals.show_subpixel_mask  = FALSE;
+      globals.gamma               = 1.8;
+      globals.glyph_surface       = 0;
+      globals.scale               = 0;
+      globals.draw_grid           = 1;
+      globals.draw_outline        = 1;
+      globals.text_color          = (ViewerColor){0, 0, 0, 1};
+      globals.bg_color            = (ViewerColor){1, 1, 1, 1};
+      globals.grid_color          = (ViewerColor){0, 0, 0, 0.3};
+      globals.grid_origin_color   = (ViewerColor){0, 0, 0, 0.8};
+      globals.outline_color       = (ViewerColor){1, 0, 0, 1};
+      globals.on_point_color      = globals.outline_color;
+      globals.ctrl_point_color    = (ViewerColor){0, 0.7, 0, 1};
+      globals.edge_unlinked_color = (ViewerColor){0, 0.4, 1, 0.8};
+      globals.edge_linked_color   = (ViewerColor){1, 0, 1, 0.8};
+      globals.edge_serif_color    = (ViewerColor){0, 1, 0.4, 0.8};
+      globals.status_text         = g_string_new( "No font loaded" );
 
       calculate_gamma_tables();
     }

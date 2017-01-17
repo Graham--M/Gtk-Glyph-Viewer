@@ -5,7 +5,7 @@ A basic glyph rendering program using the Freetype library intended as a base fo
 Some useful features are:
 * Uses a file open dialog to open font files so no more typing long paths on the command line.
 * When opening a file with multiple faces (e.g. a TrueType Collection) it prompts the user with a list of the faces in the file to select.
-* Better linear blending. The `ftgrid` demo (and the other Freetype demos) use a smaller lookup table resulting bands of shade and gives less than 256 shades of grey. The output is now closer to what a graphics library would draw.
+* Better linear blending. The `ftgrid` demo (and the other Freetype demos) use a smaller lookup table resulting in bands of shade and gives less than 256 shades of grey. The output is now closer to what a graphics library would draw.
 * There's an option to draw the subpixel elements as a trio of greyscale segments inside the scaled pixel instead of a RGB colored pixel. This lets the user see the effects of the LCD filtering and the shape of the rasterized output down to a subpixel level.
 * Can click and drag to move the drawn glyph about.
 
